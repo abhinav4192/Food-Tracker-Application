@@ -19,10 +19,19 @@
         <activity
             android:name=".AddMealActivity"
             android:label="@string/title_activity_add_meal"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fightingpit.foodtracker.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AddFoodInAddMealActivty"
+            android:label="@string/title_activity_add_food_in_add_meal_activty"
+            android:parentActivityName=".AddMealActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fightingpit.foodtracker.AddMealActivity" />
         </activity>
     </application>
 

@@ -3,8 +3,11 @@ package fightingpit.foodtracker;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,11 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fightingpit.foodtracker.DB.FoodItemsDbMethods;
 import fightingpit.foodtracker.DB.MealDbMethods;
+import fightingpit.foodtracker.DB.MealFoodDbMethods;
 import fightingpit.foodtracker.DB.MealTypeDbMethods;
 
 
@@ -32,15 +39,27 @@ public class AddMealActivity extends ActionBarActivity{
     private int year, month, day;
     private String mealDate;
     private Button addMealToTableButton;
+    private Button aBtn;
     private AutoCompleteTextView autoText;
+    private List<String> aFoodList;
+    private TextView aFoodDisplay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_meal);
 
+        Log.d("ABG", "onCreate");
+        if(savedInstanceState != null){
+            Log.d("ABG", savedInstanceState.getString("test"));
+        }
+
         populateMealTypeSpinner();
         initializeDatePicker();
         populateAutoTextFoodItems();
+
+
+        aFoodList = new ArrayList<>();
+
 
         // Get Add Meal and setOnclickListener.
         // TODO: 06-Sep-15 This is basically a save button. Change name if required.
@@ -54,6 +73,24 @@ public class AddMealActivity extends ActionBarActivity{
 
         getSupportActionBar().setTitle("Add Food to Meal");
 
+
+        aBtn = (Button) findViewById(R.id.bt_addFoodToMeal);
+        aBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), AddFoodInAddMealActivty.class);
+                startActivityForResult(i, 101);
+            }
+        });
+
+        aFoodDisplay = (TextView) findViewById(R.id.tv_displayFoods);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
+            aFoodList.add(data.getStringExtra("added_food"));
+        }
     }
 
     private void populateMealTypeSpinner() {
@@ -77,6 +114,50 @@ public class AddMealActivity extends ActionBarActivity{
                 android.R.layout.simple_dropdown_item_1line, aFoodItemList);
 
         autoText.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("ABG", "onStart");
+        if(aFoodList.size()>2){
+            aBtn.setVisibility(View.GONE);
+        }
+        else {
+            aBtn.setVisibility(View.VISIBLE);
+        }
+        String aFDisplay = new String();
+        for(int i = 0; i < aFoodList.size();i++){
+            if(i!=0) {
+                aFDisplay += "<br />";
+            }
+            aFDisplay += aFoodList.get(i);
+        }
+        aFoodDisplay.setText(Html.fromHtml(aFDisplay));
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("ABG", "onResume");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("ABG", "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("ABG", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("ABG", "onDestroy");
     }
 
     private void initializeDatePicker(){
@@ -112,30 +193,49 @@ public class AddMealActivity extends ActionBarActivity{
     }
 
     private void addNewMeal(){
+        Log.d("ABG", "addNewMeal1");
         MealDbMethods aMealDbHandler = new MealDbMethods(this);
         MealTypeDbMethods aMealTypeDbHandler = new MealTypeDbMethods(this);
         FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
+        MealFoodDbMethods aMealFoodDbHandler = new MealFoodDbMethods(this);
+
+        boolean aCommitToDb = true;
+
+        // Get MealTypeId from MealTypeName
+        Integer aMealTypeId = aMealTypeDbHandler.getMealTypeIdFromMealTypeName(aSpinner.getSelectedItem().toString());
 
         // TODO: 06-Sep-15 Validate all data first, then perform write operations.
-        boolean isMealAdded = aMealDbHandler.addNewMeal(
-                aMealTypeDbHandler.getMealTypeIdFromMealTypeName(aSpinner.getSelectedItem().toString()),
-                mealDate);
-        if(isMealAdded == false){
+        if(aMealDbHandler.isMealAlreadyAdded(aMealTypeId,mealDate)){
             Toast.makeText(this,"Meal Already Added",Toast.LENGTH_SHORT).show();
-        } else{
-            String aFoodItemName = autoText.getText().toString();
-            int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName);
-            // TODO: 05-Sep-15 Fix This Code
-            if(aFoodItemId == -1){
-                if(aFoodItemDbHandler.addFoodItem(aFoodItemName)){
-                    // TODO: 05-Sep-15  Add Meal and Food.
-                    Toast.makeText(this,"Food Added",Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(this,"Failed to add food",Toast.LENGTH_SHORT).show();
+            aCommitToDb = false;
+        }
+
+        final Set<String> set1 = new HashSet<>(aFoodList);
+        if(aFoodList.size() > set1.size()){
+            Toast.makeText(this,"A food Item is added twice",Toast.LENGTH_SHORT).show();
+            aCommitToDb = false;
+        }
+
+        if(aCommitToDb){
+            // Add the Meal to the Table.
+            aMealDbHandler.addNewMeal(aMealTypeId, mealDate);
+
+            // Get MealId of Meal just added.
+            int aMealId = aMealDbHandler.getMealId(aMealTypeId, mealDate);
+
+            for(String aFoodItemName: aFoodList){
+                // Get FoodItemId of Food
+                int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName);
+                if(aFoodItemId == -1){
+                    // Food Item Not present in DB. Add Food Item in DB
+                    aFoodItemDbHandler.addFoodItem(aFoodItemName);
+                    // Get food item from just added food.
+                    aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName);
                 }
-            }else{
-                Toast.makeText(this,"Food Already present",Toast.LENGTH_SHORT).show();
+                // Add foodItem to Meal.
+                aMealFoodDbHandler.addFoodToMeals(aMealId,aFoodItemId);
             }
+            this.finish();
         }
     }
     // Code below is for DatePicker.

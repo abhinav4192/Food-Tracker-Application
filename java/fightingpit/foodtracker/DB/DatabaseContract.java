@@ -88,13 +88,13 @@ public final class DatabaseContract {
         public static final String TABLE_NAME   = "SYMPTOMS";
         public static final String SYMPTOM_ID   = "SYMPTOM_ID";
         public static final String SYMPTOM_NAME = "SYMPTOM_NAME";
-        public static final String SYMPTOM_TYPE = "SYMPTOM_TYPE";
+        //public static final String SYMPTOM_TYPE = "SYMPTOM_TYPE";
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
                 SYMPTOM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                 SYMPTOM_NAME + " TEXT NOT NULL" + COMMA_SEP +
-                SYMPTOM_TYPE + " TEXT NOT NULL" + COMMA_SEP +
+                //SYMPTOM_TYPE + " TEXT NOT NULL" + COMMA_SEP +
                 UNIQUE + " (" + SYMPTOM_NAME + ")" +
                 " )";
 

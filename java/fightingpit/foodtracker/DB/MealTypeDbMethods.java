@@ -35,7 +35,7 @@ public class MealTypeDbMethods {
      * @param iMealType Name of the Meal Type
      * @return true if meal was added, false if not.
      */
-    public boolean insertMealType(String iMealType){
+    public boolean addMealType(String iMealType){
         boolean aReturn = true;
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -118,8 +118,6 @@ public class MealTypeDbMethods {
     {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
         String[] projection = {DatabaseContract.MealType.MEAL_TYPE_ID};
         String selection = DatabaseContract.MealType.MEAL_TYPE_NAME + "=?";
         String[] selectionArgs = {iMealTypeName};
@@ -135,8 +133,6 @@ public class MealTypeDbMethods {
         );
         c.moveToFirst();
         return c.getInt(c.getColumnIndexOrThrow(DatabaseContract.MealType.MEAL_TYPE_ID));
-
-
     }
 }
 

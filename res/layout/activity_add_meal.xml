@@ -61,7 +61,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="32dp"
-                android:layout_marginEnd="32dp" />
+                android:layout_marginEnd="32dp"
+                android:freezesText="true"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -94,6 +95,13 @@
             android:id="@+id/bt_addMealToTable"
             android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Food"
+            android:id="@+id/bt_addFoodToMeal"
+            android:layout_gravity="center_horizontal" />
+
         <AutoCompleteTextView
             android:id="@+id/autoText1"
             android:layout_width="300dp"
@@ -101,6 +109,14 @@
             android:imeOptions="actionSearch"
             android:inputType="textAutoComplete|textAutoCorrect"
             android:textColor="#000"
+            android:layout_gravity="center_horizontal"
+            android:freezesText="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/tv_displayFoods"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>

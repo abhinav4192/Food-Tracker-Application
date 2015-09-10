@@ -4,10 +4,53 @@
     tools:context="fightingpit.foodtracker.OrganizerMainFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:id="@+id/tv_frag_organizer_main"
-        android:text="Organizer View"
-        android:layout_gravity="center"
-        android:gravity="center"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top">
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_inputText"
+            android:layout_marginTop="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Add Meal Type"
+            android:id="@+id/bt_addMealType"
+            android:layout_below="@+id/et_inputText"
+            android:layout_alignLeft="@+id/bt_addFoodItem"
+            android:layout_alignStart="@+id/bt_addFoodItem" />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Add Food Item"
+            android:id="@+id/bt_addFoodItem"
+            android:layout_below="@+id/bt_addMealType"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Add Ingredient"
+            android:id="@+id/bt_addIngredient"
+            android:layout_below="@+id/bt_addFoodItem"
+            android:layout_alignLeft="@+id/bt_addFoodItem"
+            android:layout_alignStart="@+id/bt_addFoodItem" />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Add Symptom"
+            android:id="@+id/bt_addSymptom"
+            android:layout_below="@+id/bt_addIngredient"
+            android:layout_alignLeft="@+id/bt_addIngredient"
+            android:layout_alignStart="@+id/bt_addIngredient" />
+    </RelativeLayout>
 </FrameLayout>
