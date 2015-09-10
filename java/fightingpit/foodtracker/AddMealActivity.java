@@ -40,7 +40,6 @@ public class AddMealActivity extends ActionBarActivity{
     private String mealDate;
     private Button addMealToTableButton;
     private Button aBtn;
-    private AutoCompleteTextView autoText;
     private List<String> aFoodList;
     private TextView aFoodDisplay;
     @Override
@@ -55,7 +54,6 @@ public class AddMealActivity extends ActionBarActivity{
 
         populateMealTypeSpinner();
         initializeDatePicker();
-        populateAutoTextFoodItems();
 
 
         aFoodList = new ArrayList<>();
@@ -102,18 +100,6 @@ public class AddMealActivity extends ActionBarActivity{
                 android.R.layout.simple_spinner_dropdown_item, aMealList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         aSpinner.setAdapter(dataAdapter);
-    }
-
-    private void populateAutoTextFoodItems(){
-        // TODO: 06-Sep-15 Chek where to implement. Maybe in a new dialogue/activity.
-        autoText = (AutoCompleteTextView) findViewById(R.id.autoText1);
-        FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
-        List<String> aFoodItemList = aFoodItemDbHandler.getAllFoodItems();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, aFoodItemList);
-
-        autoText.setAdapter(adapter);
     }
 
     @Override

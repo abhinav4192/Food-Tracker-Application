@@ -6,8 +6,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+
+import java.util.List;
+
+import fightingpit.foodtracker.DB.FoodItemsDbMethods;
 
 public class AddFoodInAddMealActivty extends AppCompatActivity {
 
@@ -19,7 +24,7 @@ public class AddFoodInAddMealActivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food_in_add_meal_activty);
 
-        autoText = (AutoCompleteTextView) findViewById(R.id.at_getFoodItem);
+        populateAutoTextFoodItems();
         addFood = (Button) findViewById(R.id.bt_addFoodFromAddMeal);
         addFood.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,6 +36,18 @@ public class AddFoodInAddMealActivty extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void populateAutoTextFoodItems(){
+        // TODO: 06-Sep-15 Chek where to implement. Maybe in a new dialogue/activity.
+        autoText = (AutoCompleteTextView) findViewById(R.id.at_getFoodItem);
+        FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
+        List<String> aFoodItemList = aFoodItemDbHandler.getAllFoodItems();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, aFoodItemList);
+
+        autoText.setAdapter(adapter);
     }
 
     @Override

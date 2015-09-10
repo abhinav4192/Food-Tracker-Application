@@ -91,26 +91,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Meal"
-            android:id="@+id/bt_addMealToTable"
+            android:text="Add Food"
+            android:id="@+id/bt_addFoodToMeal"
             android:layout_gravity="center_horizontal" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Food"
-            android:id="@+id/bt_addFoodToMeal"
+            android:text="Add Meal"
+            android:id="@+id/bt_addMealToTable"
             android:layout_gravity="center_horizontal" />
-
-        <AutoCompleteTextView
-            android:id="@+id/autoText1"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionSearch"
-            android:inputType="textAutoComplete|textAutoCorrect"
-            android:textColor="#000"
-            android:layout_gravity="center_horizontal"
-            android:freezesText="true"/>
 
         <TextView
             android:layout_width="wrap_content"
