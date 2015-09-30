@@ -2,6 +2,7 @@ package fightingpit.foodtracker.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -35,6 +36,28 @@ public class MealFoodDbMethods {
             db.insertOrThrow(DatabaseContract.MealFood.TABLE_NAME, null, aVal);
         }catch(SQLiteConstraintException e){
             aReturnValue = false;
+        }
+        return aReturnValue;
+    }
+
+    public int getSymptomId(String iSymptomName){
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {DatabaseContract.Symptoms.SYMPTOM_ID};
+        String selection = DatabaseContract.Symptoms.SYMPTOM_NAME + "=?";
+        String[] selectionArgs = {iSymptomName};
+
+        Cursor c = db.query(
+                DatabaseContract.Symptoms.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        int aReturnValue = -1;
+        if(c.getCount()>0){
+            // TODO: 06-Sep-15 Change/Check the if check.
+            c.moveToFirst();
+            aReturnValue = c.getInt(c.getColumnIndexOrThrow(DatabaseContract.FoodItems.FOOD_ITEM_ID));
         }
         return aReturnValue;
     }

@@ -63,9 +63,11 @@ public class OrganizerMainFragment extends Fragment implements View.OnClickListe
         addSymptom.setOnClickListener(this);
 
         inputTextFromTextView = (EditText) view.findViewById(R.id.et_inputText);
-        inputTextFromTextView.setText(Html.fromHtml("<b>" + "Bold TEXT" + "</b>" +  "<br />" +
-                "<small>" + "Small" + "</small>" + "<br />" +
-                "<small>" + "TEST Text" + "</small>"));
+//        inputTextFromTextView.setText(Html.fromHtml("<b>" + "Bold TEXT" + "</b>" +  "<br />" +
+//                "<small>" + "Small" + "</small>" + "<br />" +
+//                "<small>" + "TEST Text" + "</small>"));
+
+        inputTextFromTextView.setText("");
 
         return view;
     }

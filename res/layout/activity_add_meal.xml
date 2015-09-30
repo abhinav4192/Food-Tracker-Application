@@ -11,29 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Meal Type"
-                android:textColor="#ff0a5177"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textColor="#ff0a5177"
-                android:text="Select Date"/>
-        </LinearLayout>
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -65,29 +42,14 @@
                 android:freezesText="true"/>
         </RelativeLayout>
 
-        <LinearLayout
+        <ListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Foods"
-                android:textColor="#000099"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textColor="#000099"
-                android:text="Add Food"/>
-        </LinearLayout>
-
+            android:layout_height="wrap_content"
+            android:id="@+id/listAddFoodInMeal"
+            android:layout_centerHorizontal="true"
+            android:divider="#7c7777"
+            android:dividerHeight="1dp"
+            android:listSelector="@android:color/transparent" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,15 +63,17 @@
             android:text="Add Meal"
             android:id="@+id/bt_addMealToTable"
             android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <ListView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/tv_displayFoods"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/listAllSymptoms"
+            android:layout_centerHorizontal="true"
+            android:divider="#7c7777"
+            android:dividerHeight="1dp"
+            android:listSelector="@android:color/transparent" />
 
     </LinearLayout>
+
 
 
 
