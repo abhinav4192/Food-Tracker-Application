@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.widget.Button;
 
 
@@ -51,7 +51,7 @@ public class FoodDiaryMainFragment extends Fragment implements View.OnClickListe
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getActivity().getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                getActivity().getFragmentManager().findFragmentById(R.id.navigation_drawer);
         if(!mNavigationDrawerFragment.isDrawerOpen()) {
             menu.clear();
             inflater.inflate(R.menu.food_dairy_fragment, menu);

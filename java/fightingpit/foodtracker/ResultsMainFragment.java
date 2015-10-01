@@ -2,7 +2,7 @@ package fightingpit.foodtracker;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +41,7 @@ public class ResultsMainFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getActivity().getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                getActivity().getFragmentManager().findFragmentById(R.id.navigation_drawer);
         if(!mNavigationDrawerFragment.isDrawerOpen()) {
             menu.clear();
             inflater.inflate(R.menu.results_fragment, menu);

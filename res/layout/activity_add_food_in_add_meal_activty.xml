@@ -4,12 +4,15 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="fightingpit.foodtracker.AddFoodInAddMealActivty">
+    tools:context="fightingpit.foodtracker.AddFoodInAddMealActivty"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:clickable="true">
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/linearLayout">
+    android:id="@+id/ll_foodSelector">
 
     <TextView
         android:layout_width="0dp"
@@ -25,9 +28,10 @@
         android:layout_weight="7"
         android:layout_height="wrap_content"
         android:imeOptions="actionSearch"
-        android:inputType="textAutoComplete|textAutoCorrect"
+        android:inputType="textAutoComplete"
         android:textColor="#000"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:hint="Food Item Name" />
 </LinearLayout>
 
     <Button
@@ -35,7 +39,41 @@
         android:layout_height="wrap_content"
         android:text="Add Food"
         android:id="@+id/bt_addFoodFromAddMeal"
-        android:layout_below="@+id/linearLayout"
+        android:layout_below="@+id/ll_foodSelector"
         android:layout_centerHorizontal="true" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bt_addFoodFromAddMeal"
+        android:id="@+id/ll_ingredientAddView">
+
+        <EditText
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_insertIngredient"
+            android:layout_below="@+id/tv_ingredientAddView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/button"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:id="@+id/bt_addIngredient"
+            android:layout_alignTop="@+id/tv_ingredientAddView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/tv_ingredientDetails"
+        android:layout_below="@+id/ll_ingredientAddView"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>

@@ -4,8 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -33,7 +33,7 @@ import fightingpit.foodtracker.DB.MealTypeDbMethods;
 import fightingpit.foodtracker.DB.SymptomsDbMethods;
 
 
-public class AddMealActivity extends ActionBarActivity{
+public class AddMealActivity extends Activity{
 
     private Spinner mMealSelectorSpinner;
     private TextView mSelectedDateDisplay;
@@ -71,7 +71,7 @@ public class AddMealActivity extends ActionBarActivity{
         });
 
         // Set Title of Activity
-        getSupportActionBar().setTitle("Add Meal");
+        getActionBar().setTitle("Add Meal");
 
 
         //
