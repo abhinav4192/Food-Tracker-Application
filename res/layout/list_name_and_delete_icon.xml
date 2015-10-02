@@ -19,11 +19,11 @@
         android:text=" fsd fsdaf sdaf sda fsda fsda fsda fsda "/>
 
     <ImageView
-        android:id="@+id/iv_foodDeleteView"
+        android:id="@+id/iv_list_delete_button"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:padding="4dp"
-        android:src="@drawable/ic_delete_black_24dp"
+        android:src="@drawable/delete_orange_button_resource"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />

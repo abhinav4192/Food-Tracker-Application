@@ -1,6 +1,7 @@
 package fightingpit.foodtracker.CustomLists;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -61,7 +62,7 @@ public class ListAdapterNameAndDeleteIcon extends BaseAdapter {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.list_name_and_delete_icon, null);
             holder.FoodDisplay = (TextView) convertView.findViewById(R.id.tv_displayFood);
-            holder.DeleteButtonView = (ImageView) convertView.findViewById(R.id.iv_foodDeleteView);
+            holder.DeleteButtonView = (ImageView) convertView.findViewById(R.id.iv_list_delete_button);
             convertView.setTag(holder);
         }
         else {
@@ -69,8 +70,9 @@ public class ListAdapterNameAndDeleteIcon extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.FoodDisplay.setText(ListData.get(position).getText());
+        Log.d("ABGU","HolderClass:" + ListData.get(position).getText());
 
-        ImageView aImg = (ImageView) convertView.findViewById(R.id.iv_foodDeleteView);
+        ImageView aImg = (ImageView) convertView.findViewById(R.id.iv_list_delete_button);
         aImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
