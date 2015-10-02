@@ -4,76 +4,54 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="fightingpit.foodtracker.AddFoodInAddMealActivty"
+    tools:context="fightingpit.foodtracker.AddFoodInAddMealActivity"
     android:focusableInTouchMode="true"
     android:focusable="true"
     android:clickable="true">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/ll_foodSelector">
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_weight="3"
-        android:layout_height="37dp"
-        android:gravity="center"
-        android:text="Food Item:"
-        android:id="@+id/tv_blah"/>
-
     <AutoCompleteTextView
         android:id="@+id/at_getFoodItem"
-        android:layout_width="wrap_content"
-        android:layout_weight="7"
-        android:layout_height="wrap_content"
-        android:imeOptions="actionSearch"
-        android:inputType="textAutoComplete"
-        android:textColor="#000"
+        android:imeOptions="actionDone"
+        android:inputType="textAutoComplete|textAutoCorrect"
         android:layout_gravity="center_horizontal"
-        android:hint="Food Item Name" />
-</LinearLayout>
+        android:hint="Enter a Food Item"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        style="@style/pdAutoCompleteTextView"
+         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Food"
-        android:id="@+id/bt_addFoodFromAddMeal"
-        android:layout_below="@+id/ll_foodSelector"
-        android:layout_centerHorizontal="true" />
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_add_food_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bt_addFoodFromAddMeal"
-        android:id="@+id/ll_ingredientAddView">
+        android:layout_below="@+id/at_getFoodItem"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"/>
+    <ListView
+        android:id="@+id/lv_ingredientsList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_add_food_text1"
+        android:layout_toRightOf="@+id/tv_add_food_text1"
+        android:layout_toEndOf="@+id/tv_add_food_text1"/>
 
-        <EditText
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/et_insertIngredient"
-            android:layout_below="@+id/tv_ingredientAddView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignBottom="@+id/button"/>
+    <LinearLayout
+        android:id="@+id/ll_addIngredientLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lv_ingredientsList">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+"
-            android:id="@+id/bt_addIngredient"
-            android:layout_alignTop="@+id/tv_ingredientAddView"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+
+        <AutoCompleteTextView
+            android:id="@+id/ll_addIngredient"
+            style="@style/pdAutoCompleteTextView"/>
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_add_food_text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/tv_ingredientDetails"
-        android:layout_below="@+id/ll_ingredientAddView"
-        android:layout_centerHorizontal="true" />
-
+        android:layout_below="@+id/ll_addIngredientLayout"/>
 
 </RelativeLayout>

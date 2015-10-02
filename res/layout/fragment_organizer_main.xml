@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fightingpit.foodtracker.OrganizerMainFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -53,4 +56,5 @@
             android:layout_alignLeft="@+id/bt_addIngredient"
             android:layout_alignStart="@+id/bt_addIngredient" />
     </RelativeLayout>
+    </ScrollView>
 </FrameLayout>

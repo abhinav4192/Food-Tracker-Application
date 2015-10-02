@@ -26,7 +26,7 @@
                 android:value="fightingpit.foodtracker.MainActivity" />
         </activity>
         <activity
-            android:name=".AddFoodInAddMealActivty"
+            android:name=".AddFoodInAddMealActivity"
             android:label="@string/title_activity_add_food_in_add_meal_activty"
             android:parentActivityName=".AddMealActivity" >
             <meta-data

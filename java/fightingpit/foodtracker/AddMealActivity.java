@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import fightingpit.foodtracker.CustomLists.ListAdapterFoodInAddMeal;
+import fightingpit.foodtracker.CustomLists.ListAdapterNameAndDeleteIcon;
 import fightingpit.foodtracker.CustomLists.ListAdapterSymptomsInAddMeal;
-import fightingpit.foodtracker.CustomLists.ListFoodInAddMeal;
+import fightingpit.foodtracker.CustomLists.ListSingleElement;
 import fightingpit.foodtracker.CustomLists.ListSymptomsInAddMeal;
 import fightingpit.foodtracker.DB.FoodItemsDbMethods;
 import fightingpit.foodtracker.DB.MealDbMethods;
@@ -43,9 +43,9 @@ public class AddMealActivity extends Activity{
     private Button mAddMealToTableButton;
     private Button mAddFoodToMealButton;
 
-    private List<ListFoodInAddMeal> mFoodList = new ArrayList<>();
+    private List<ListSingleElement> mFoodList = new ArrayList<>();
     private ListView mFoodListToDisplay;
-    ListAdapterFoodInAddMeal mFoodListAdapter;
+    ListAdapterNameAndDeleteIcon mFoodListAdapter;
 
     private List<ListSymptomsInAddMeal> mSymptomsList = new ArrayList<>();
     private ListView mSymptomsListToDisplay;
@@ -79,13 +79,13 @@ public class AddMealActivity extends Activity{
         mAddFoodToMealButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), AddFoodInAddMealActivty.class);
+                Intent i = new Intent(getBaseContext(), AddFoodInAddMealActivity.class);
                 startActivityForResult(i, 101);
             }
         });
 
         mFoodListToDisplay =(ListView) findViewById(R.id.listAddFoodInMeal);
-        mFoodListAdapter = new ListAdapterFoodInAddMeal(this,mFoodList);
+        mFoodListAdapter = new ListAdapterNameAndDeleteIcon(this,mFoodList);
         mFoodListToDisplay.setAdapter(mFoodListAdapter);
 
         SymptomsDbMethods aSymptomsDbHandler = new SymptomsDbMethods(this);
@@ -105,7 +105,7 @@ public class AddMealActivity extends Activity{
 
             boolean aAddToFoodList = true;
             Log.d("ABGK",data.getStringExtra("added_food"));
-            for(ListFoodInAddMeal aAlreadyAddedFood:mFoodList){
+            for(ListSingleElement aAlreadyAddedFood:mFoodList){
                 Log.d("ABGK",aAlreadyAddedFood.getText());
                 if(aAlreadyAddedFood.getText().equals(data.getStringExtra("added_food"))){
                     Toast.makeText(this,"Food item already added.",Toast.LENGTH_LONG).show();
@@ -114,7 +114,7 @@ public class AddMealActivity extends Activity{
                 }
             }
             if(aAddToFoodList){
-                mFoodList.add(new ListFoodInAddMeal(data.getStringExtra("added_food")));
+                mFoodList.add(new ListSingleElement(data.getStringExtra("added_food")));
                 mFoodListAdapter.notifyDataSetChanged();
             }
         }
@@ -244,7 +244,7 @@ public class AddMealActivity extends Activity{
             int aMealId = aMealDbHandler.getMealId(aMealTypeId, mealDate);
 
             // Adding foodItems to DB.
-            for(ListFoodInAddMeal aFoodItemName: mFoodList){
+            for(ListSingleElement aFoodItemName: mFoodList){
                 // Get FoodItemId of Food
                 int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName.getText());
                 if(aFoodItemId == -1){

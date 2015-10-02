@@ -3,10 +3,10 @@ package fightingpit.foodtracker.CustomLists;
 /**
  * Created by AG on 11-Sep-15.
  */
-public class ListFoodInAddMeal {
+public class ListSingleElement {
     private String text;
 
-    public ListFoodInAddMeal(String text) {
+    public ListSingleElement(String text) {
         this.text = text;
     }
 
