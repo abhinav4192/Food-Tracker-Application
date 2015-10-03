@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import java.util.List;
 
+import fightingpit.foodtracker.AddFoodInAddMealActivity;
 import fightingpit.foodtracker.AddMealActivity;
 import fightingpit.foodtracker.R;
 
@@ -58,7 +59,6 @@ public class ListAdapterNameAndDeleteIcon extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if(convertView == null){
-            //Log.d("ABG", "in convertview if");
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.list_name_and_delete_icon, null);
             holder.FoodDisplay = (TextView) convertView.findViewById(R.id.tv_displayFood);
@@ -66,19 +66,24 @@ public class ListAdapterNameAndDeleteIcon extends BaseAdapter {
             convertView.setTag(holder);
         }
         else {
-            //Log.d("ABG", "in convertview else");
             holder = (ViewHolder) convertView.getTag();
         }
         holder.FoodDisplay.setText(ListData.get(position).getText());
-        Log.d("ABGU","HolderClass:" + ListData.get(position).getText());
 
         ImageView aImg = (ImageView) convertView.findViewById(R.id.iv_list_delete_button);
         aImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // Delete button clicked. Remove the Food Item.
-                ((AddMealActivity) context).removeFoodFromMeal(position);
+                if(context.getClass().getSimpleName().equals("AddMealActivity")){
+                    // Delete button clicked. Remove the Food Item.
+                    ((AddMealActivity) context).removeFoodFromMeal(position);
+                } else if(context.getClass().getSimpleName().equals("AddFoodInAddMealActivity")){
+                    // Delete Button Clicked. Remove the Ingredient.
+                    ((AddFoodInAddMealActivity) context).removeIngredientFromFood(position);
+                }
+
+
             }
         });
         return convertView;

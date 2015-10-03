@@ -56,7 +56,7 @@ public class ListAdapterSingleElement extends BaseAdapter {
         ViewHolder holder = null;
         if(convertView == null){
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.list_name_and_delete_icon, null);
+            convertView = inflater.inflate(R.layout.list_single_element, null);
             holder.FoodDisplay = (TextView) convertView.findViewById(R.id.tv_element_text);
             convertView.setTag(holder);
         }

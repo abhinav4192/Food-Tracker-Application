@@ -56,8 +56,6 @@ public class AddMealActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_meal);
 
-        Log.d("ABG", "onCreate");
-
         populateMealTypeSpinner();
         initializeDatePicker();
 
@@ -104,9 +102,7 @@ public class AddMealActivity extends Activity{
         if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
 
             boolean aAddToFoodList = true;
-            Log.d("ABGK",data.getStringExtra("added_food"));
             for(ListSingleElement aAlreadyAddedFood:mFoodList){
-                Log.d("ABGK",aAlreadyAddedFood.getText());
                 if(aAlreadyAddedFood.getText().equals(data.getStringExtra("added_food"))){
                     Toast.makeText(this,"Food item already added.",Toast.LENGTH_LONG).show();
                     aAddToFoodList = false;

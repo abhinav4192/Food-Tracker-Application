@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by AG on 06-Sep-15.
  */
@@ -76,5 +79,19 @@ public class IngredientsDbMethods {
 
         }
         return aReturnValue;
+    }
+
+    public List<String> getAllIngredients(){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {DatabaseContract.Ingredients.INGREDIENT_NAME};
+        Cursor c = db.query(DatabaseContract.Ingredients.TABLE_NAME, projection, null, null, null, null, null);
+
+        List<String> aReturnList = new ArrayList<String>();
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            aReturnList.add(c.getString(c.getColumnIndexOrThrow(DatabaseContract.Ingredients.INGREDIENT_NAME)));
+            c.moveToNext();
+        }
+        return aReturnList;
     }
 }

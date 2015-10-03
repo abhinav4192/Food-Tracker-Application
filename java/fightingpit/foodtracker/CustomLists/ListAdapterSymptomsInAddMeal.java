@@ -61,7 +61,6 @@ public class ListAdapterSymptomsInAddMeal extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Log.d("ABG", "GET VIEW:" + String.valueOf(position));
         atempView = convertView;
         final ViewHolder holder;
         if(convertView == null){

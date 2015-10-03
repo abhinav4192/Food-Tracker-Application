@@ -4,21 +4,18 @@ import android.content.Intent;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,12 +34,16 @@ public class AddFoodInAddMealActivity extends Activity {
     private AutoCompleteTextView mAddFoodAutoText;
     private AutoCompleteTextView mAddIngredientAutoText;
     private TextView mAddFoodTextUpper;
-    private List<ListSingleElement> mIngredientListFromUser = new ArrayList<>();
+    private List<ListSingleElement> mIngredientCompleteList = new ArrayList<>();
     private ListView mIngredientListView;
     private MenuItem mActionAddFoodButton;
-    private ImageView mAddIngredientButton;
     private ListAdapterSingleElement mAdapterSingleElement;
     private ListAdapterNameAndDeleteIcon mAdapterNameAndDeleteIcon;
+    private RelativeLayout mIngredientRelativeLayout;
+    private String mCurrentFoodItem="";
+    private final String mFirstTimeFood="<b>Contains:</b><br><h7>" +
+            "You are adding this food item for the first time. " +
+            "You can add ingredients to the food item.</h7>";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,25 +56,31 @@ public class AddFoodInAddMealActivity extends Activity {
         // Populate the mAddFoodAutoText with already existing food items.
         populateAddFoodAutoTextFoodItems();
 
+        // Get Ingredient Add layout. And Do not Show it.
+        mIngredientRelativeLayout = (RelativeLayout) findViewById(R.id.rl_ingredientsList);
+        mIngredientRelativeLayout.setVisibility(View.GONE);
+
+        // Get upper textView.
         mAddFoodTextUpper = (TextView) findViewById(R.id.tv_add_food_text_upper);
+        mAddFoodTextUpper.setVisibility(View.GONE);
+        // Get listView
         mIngredientListView = (ListView) findViewById(R.id.lv_ingredientsList);
 
-        mAddIngredientButton = (ImageView) findViewById(R.id.ll_addIngredientButton);
+        // Get button which will add ingredients.
+        ImageView mAddIngredientButton = (ImageView) findViewById(R.id.ll_addIngredientButton);
         mAddIngredientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addIngredientToList();
             }
         });
-        mAddIngredientButton.setVisibility(View.GONE);
 
-        handleIngredientAutoText();
+        // Get ingredient AutoText.
+        mAddIngredientAutoText = (AutoCompleteTextView) findViewById(R.id.ll_addIngredient);
     }
 
     private void populateAddFoodAutoTextFoodItems() {
-
         mAddFoodAutoText = (AutoCompleteTextView) findViewById(R.id.at_getFoodItem);
-
         // Get all food items and add to list.
         FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
         List<String> aFoodItemList = aFoodItemDbHandler.getAllFoodItems();
@@ -93,7 +100,7 @@ public class AddFoodInAddMealActivity extends Activity {
         mAddFoodAutoText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
                     handleAddFoodAutoTextDoneAction();
                     return true;
                 }
@@ -111,6 +118,10 @@ public class AddFoodInAddMealActivity extends Activity {
                     // Hide Keyboard
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                    // Clear IngredientsList
+                    clearIngredientList();
+
                     decideIngredientDisplay();
                 } else {
                     // Hide menu Item. Disable add Food option.
@@ -120,22 +131,125 @@ public class AddFoodInAddMealActivity extends Activity {
         });
     }
 
-    public void handleIngredientAutoText(){
-        mAddIngredientAutoText = (AutoCompleteTextView) findViewById(R.id.ll_addIngredient);
+    public void handleAddFoodAutoTextDoneAction() {
+        // Hide the keyboard.
+        View aView = getCurrentFocus();
+        if (aView != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(aView.getWindowToken(), 0);
+        }
+        // Clear focus
+        mAddFoodAutoText.clearFocus();
+        // Clear IngredientsList
+        clearIngredientList();
+        // Handle List Item Click.
+        decideIngredientDisplay();
+    }
 
-        // Done clicked for Keyboard
+    public void clearIngredientList(){
+        // Reaching here means Food Item has been added/modified.
+        // Clear existing in Ingredient List only if Food Item has been modified.
+
+        boolean toClearIngredientsList = false;
+        if(!CommonUtils.islengthValid(mAddFoodAutoText.getText().toString())){
+            toClearIngredientsList = true;
+        }else if(CommonUtils.islengthValid(mCurrentFoodItem) &&
+                !mCurrentFoodItem.equals(CommonUtils.makeProperFormat(mAddFoodAutoText.getText().toString()))){
+            toClearIngredientsList = true;
+        }
+        if(toClearIngredientsList){
+            mIngredientCompleteList.clear();
+            if(mAdapterNameAndDeleteIcon!=null){
+                mAdapterNameAndDeleteIcon.notifyDataSetChanged();
+            }
+            if(mAdapterSingleElement!=null){
+                mAdapterSingleElement.notifyDataSetChanged();
+            }
+            mAddIngredientAutoText.setText("");
+            CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
+        }
+    }
+
+    public void decideIngredientDisplay() {
+        // Get Food name entered in AutoText
+        String aFoodItemName = mAddFoodAutoText.getText().toString();
+        if (CommonUtils.islengthValid(aFoodItemName)) {
+            aFoodItemName = CommonUtils.makeProperFormat(aFoodItemName);
+            mCurrentFoodItem = aFoodItemName;
+            FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
+            int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName);
+            if(mIngredientCompleteList.size()==0){
+                if (aFoodItemId == -1) {
+                    // Item does not exits. Make Add ingredient UI visible.
+                    mIngredientRelativeLayout.setVisibility(View.VISIBLE);
+
+                    // Set upper text display.
+                    mAddFoodTextUpper.setText(Html.fromHtml(mFirstTimeFood));
+                    mAddFoodTextUpper.setVisibility(View.VISIBLE);
+
+                    // Set Hint in Ingredient AutoText
+                    mAddIngredientAutoText.setHint("Add Ingredient (Optional)");
+
+                    // Fill adapter with empty List.
+                    mAdapterNameAndDeleteIcon = new ListAdapterNameAndDeleteIcon(this, mIngredientCompleteList);
+                    mIngredientListView.setAdapter(mAdapterNameAndDeleteIcon);
+                    CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
+
+                    // Populate ingredients Autotext.
+                    handleIngredientAutoText();
+                } else {
+                    // Item Exists. Make Add ingredient UI hidden.
+                    mIngredientRelativeLayout.setVisibility(View.GONE);
+
+                    FoodIngredientsDbMethods aFoodIngredientsDbHandler = new FoodIngredientsDbMethods(this);
+                    List<String> aIngredientIdList = aFoodIngredientsDbHandler.getAllIngredientsInFood(aFoodItemId);
+                    if (aIngredientIdList.size() > 0) {
+                        mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b>"));
+
+                        IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
+                        for (String ingredientId : aIngredientIdList) {
+                            mIngredientCompleteList.add(new ListSingleElement(aIngredientsDbHandler.getIngredientName(ingredientId)));
+                        }
+
+                        mAdapterSingleElement = new ListAdapterSingleElement(this, mIngredientCompleteList);
+                        mIngredientListView.setAdapter(mAdapterSingleElement);
+                        CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
+                    } else {
+                        mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b><br><h7>No Ingredient</h7>"));
+                    }
+                    mAddFoodTextUpper.setVisibility(View.VISIBLE);
+                }
+            }
+        } else {
+            mIngredientRelativeLayout.setVisibility(View.GONE);
+            mAddFoodTextUpper.setVisibility(View.GONE);
+        }
+    }
+
+    public void handleIngredientAutoText(){
+
+        // Get all Ingredients items and add to Autotext list.
+        IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
+        List<String> aIngredientList = aIngredientsDbHandler.getAllIngredients();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, aIngredientList);
+        mAddIngredientAutoText.setAdapter(adapter);
+
+
+        // An item from List is clicked.
+        mAddIngredientAutoText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                addIngredientToList();
+            }
+        });
+
+        // Done clicked on Keyboard
         mAddIngredientAutoText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    // Hide the keyboard.
-                    View aView = getCurrentFocus();
-                    if (aView != null) {
-                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                        inputMethodManager.hideSoftInputFromWindow(aView.getWindowToken(), 0);
-                    }
-                    // Clear focus
-                    mAddIngredientAutoText.clearFocus();
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    // Add item to Added Ingredient List.
                     addIngredientToList();
                     return true;
                 }
@@ -147,7 +261,6 @@ public class AddFoodInAddMealActivity extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    //mAddIngredientButton.setVisibility(View.VISIBLE);
                     // Show menu Items. Enabling add Food option.
                     mActionAddFoodButton.setVisible(true);
                     // Hide the keyboard.
@@ -156,93 +269,13 @@ public class AddFoodInAddMealActivity extends Activity {
                         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                         inputMethodManager.hideSoftInputFromWindow(aView.getWindowToken(), 0);
                     }
-                    // Clear focus
-                    mAddFoodAutoText.clearFocus();
 
                 } else {
                     // Hide menu Item. Disable add Food option.
                     mActionAddFoodButton.setVisible(false);
-                    //mAddIngredientButton.setVisibility(View.GONE);
                 }
             }
         });
-        mAddIngredientAutoText.setVisibility(View.GONE);
-    }
-
-
-
-    public void handleAddFoodAutoTextDoneAction() {
-        // Hide the keyboard.
-        View aView = getCurrentFocus();
-        if (aView != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(aView.getWindowToken(), 0);
-        }
-        // Clear focus
-        mAddFoodAutoText.clearFocus();
-        // Handle List Item Click.
-        decideIngredientDisplay();
-    }
-
-    public void decideIngredientDisplay() {
-        String aFoodItemName = mAddFoodAutoText.getText().toString();
-        if (CommonUtils.newInstance().islengthValid(aFoodItemName)) {
-            aFoodItemName = CommonUtils.newInstance().makeProperFormat(aFoodItemName);
-            FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
-            int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName);
-            if (aFoodItemId == -1) {
-                // Item does not exits
-                mAddIngredientAutoText.setVisibility(View.VISIBLE);
-                mAddIngredientButton.setVisibility(View.VISIBLE);
-
-
-                // Clear existing Ingredient List.
-//                mIngredientListFromUser.clear();
-//                if(mAdapterNameAndDeleteIcon!=null){
-//
-//                    mAdapterNameAndDeleteIcon.notifyDataSetChanged();
-//                    setListViewHeightBasedOnChildren(mIngredientListView);
-//                }
-
-                if(mIngredientListFromUser.size()==0){
-                    String aDisplay = "<small>You are adding a new food item. You can add ingredients to the food item.</small>";
-                    mAddFoodTextUpper.setText(Html.fromHtml(aDisplay));
-                    mAddFoodTextUpper.setVisibility(View.VISIBLE);
-                }
-                mIngredientListView = (ListView) findViewById(R.id.lv_ingredientsList);
-                mAdapterNameAndDeleteIcon = new ListAdapterNameAndDeleteIcon(this, mIngredientListFromUser);
-                mIngredientListView.setAdapter(mAdapterNameAndDeleteIcon);
-
-            } else {
-                // Item Exists
-                mAddIngredientAutoText.setVisibility(View.GONE);
-                mAddIngredientButton.setVisibility(View.GONE);
-
-                FoodIngredientsDbMethods aFoodIngredientsDbHandler = new FoodIngredientsDbMethods(this);
-                List<String> aIngredientIdList = aFoodIngredientsDbHandler.getAllIngredientsInFood(aFoodItemId);
-                if (aIngredientIdList.size() > 0) {
-                    String aIngredientDisplayValue = "";
-                    IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
-                    int count = 0;
-                    for (String ingredientId : aIngredientIdList) {
-                        if (count == 0) {
-                            aIngredientDisplayValue = aIngredientDisplayValue + "Contains: " + aIngredientsDbHandler.getIngredientName(ingredientId);
-                        } else {
-                            aIngredientDisplayValue = aIngredientDisplayValue + " , " + aIngredientsDbHandler.getIngredientName(ingredientId);
-                        }
-                        count++;
-                    }
-                    mAddFoodTextUpper.setText(aIngredientDisplayValue);
-                } else {
-                    mAddFoodTextUpper.setText("No ingredient Added");
-                }
-                mAddFoodTextUpper.setVisibility(View.VISIBLE);
-            }
-
-        } else {
-            //mAddIngredientLayout.setVisibility(View.GONE);
-            //mAddFoodTextUpper.setVisibility(View.GONE);
-        }
     }
 
     public void addIngredientToList() {
@@ -253,18 +286,21 @@ public class AddFoodInAddMealActivity extends Activity {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(aView.getWindowToken(), 0);
         }
-        // Clear focus
-        mAddFoodAutoText.clearFocus();
+
+        mAddIngredientAutoText.clearFocus();
+        mIngredientListView.requestFocus();
+
 
         boolean aAddIngredient = true;
         String aAddedIngredientName = mAddIngredientAutoText.getText().toString();
 
-        if (CommonUtils.newInstance().islengthValid(aAddedIngredientName)) {
-            aAddedIngredientName = CommonUtils.newInstance().makeProperFormat(aAddedIngredientName);
-            for (ListSingleElement aAlreadyAddedIngredient : mIngredientListFromUser) {
+        if (CommonUtils.islengthValid(aAddedIngredientName)) {
+            aAddedIngredientName = CommonUtils.makeProperFormat(aAddedIngredientName);
+            for (ListSingleElement aAlreadyAddedIngredient : mIngredientCompleteList) {
                 if (aAlreadyAddedIngredient.getText().equals(aAddedIngredientName)) {
                     aAddIngredient = false;
-                    Toast.makeText(this, "Ingredient already added.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Ingredient already added", Toast.LENGTH_SHORT).show();
+                    mAddIngredientAutoText.setText("");
                     break;
                 }
             }
@@ -273,19 +309,29 @@ public class AddFoodInAddMealActivity extends Activity {
             aAddIngredient = false;
         }
         if (aAddIngredient) {
-            mIngredientListFromUser.add(new ListSingleElement(aAddedIngredientName));
-            for (ListSingleElement aAlreadyAddedIngredient : mIngredientListFromUser) {
-                Log.d("ABGU", aAlreadyAddedIngredient.getText().toString());
+            mIngredientCompleteList.add(new ListSingleElement(aAddedIngredientName));
+            mAdapterNameAndDeleteIcon.notifyDataSetChanged();
+            CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
+
+            if(mIngredientCompleteList.size()==1){
+                mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b>"));
+                mAddIngredientAutoText.setHint("Add Another Ingredient");
             }
 
-            mAdapterNameAndDeleteIcon.notifyDataSetChanged();
-            setListViewHeightBasedOnChildren(mIngredientListView);
-
-            mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b>"));
-
-            mAddIngredientAutoText.setHint("Add Another Ingredient");
             mAddIngredientAutoText.setText("");
+
+
         }
+    }
+
+    public void removeIngredientFromFood(int iIndex){
+        mIngredientCompleteList.remove(iIndex);
+        if(mIngredientCompleteList.size()==0){
+            mAddFoodTextUpper.setText(Html.fromHtml(mFirstTimeFood));
+            mAddIngredientAutoText.setHint("Add Ingredient (Optional)");
+        }
+        mAdapterNameAndDeleteIcon.notifyDataSetChanged();
+        CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
     }
 
     @Override
@@ -298,25 +344,14 @@ public class AddFoodInAddMealActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_addFood) {
-            final IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
-            String aOutput = mAddFoodAutoText.getText().toString();
+            String aOutput = CommonUtils.makeProperFormat(mAddFoodAutoText.getText().toString());
             Intent output = new Intent();
             output.putExtra("added_food", aOutput);
-
-//            for(String aAddedIngredientName:mIngredientListFromUser){
-//                // TODO: 01-Oct-15 Get Auto populated Ingredients.
-//                // Add ing to db
-//                // Add ing to food.
-//                aIngredientsDbHandler.addIngredientName(aAddedIngredientName);
-//            }
             setResult(RESULT_OK, output);
+            addFoodAndIngredientsToDb();
             finish();
             return true;
         }
@@ -324,28 +359,32 @@ public class AddFoodInAddMealActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void addFoodAndIngredientsToDb(){
 
-    // Hack from stackoverflow to Dynamically Change Ingredient List size.
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null){
-            return;
+        // Actually Add Ingredients and Food Items to DB
+        String aFoodName = CommonUtils.makeProperFormat(mAddFoodAutoText.getText().toString());
+        FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
+        int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodName);
+        if(aFoodItemId == -1){
+            // Add only if FoodItem not present
+            aFoodItemDbHandler.addFoodItem(aFoodName);
+            // Add Food Item to Food Item Table.
+            aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodName);
+
+            IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
+            FoodIngredientsDbMethods aFoodIngredientsDbHandler = new FoodIngredientsDbMethods(this);
+            for (ListSingleElement aAddedIngredient : mIngredientCompleteList) {
+                String aIngredientName = aAddedIngredient.getText();
+
+                int aIngredientId = aIngredientsDbHandler.getIngredientId(aIngredientName);
+                if(aIngredientId == -1 ){
+                    // Ingredient does not exists in DB. Add to Ingredient DB Table.
+                    aIngredientsDbHandler.addIngredientName(aIngredientName);
+                    aIngredientId = aIngredientsDbHandler.getIngredientId(aIngredientName);
+                }
+                // Add to FoodIngredients DB Table.
+                aFoodIngredientsDbHandler.addIngredientsToFood(aFoodItemId,aIngredientId);
+            }
         }
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, AbsListView.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
     }
 }
