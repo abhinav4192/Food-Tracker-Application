@@ -3,7 +3,6 @@ package fightingpit.foodtracker;
 import android.content.Intent;
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,8 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class AddFoodInAddMealActivity extends Activity {
     private AutoCompleteTextView mAddIngredientAutoText;
     private TextView mAddFoodTextUpper;
     private TextView mTextViewContains;
+    private TextView mTextViewFoodProperties;
     private List<ListSingleElement> mIngredientCompleteList = new ArrayList<>();
     private ListView mIngredientListView;
     private MenuItem mActionAddFoodButton;
@@ -42,6 +44,9 @@ public class AddFoodInAddMealActivity extends Activity {
     private ListAdapterNameAndDeleteIcon mAdapterNameAndDeleteIcon;
     private RelativeLayout mIngredientRelativeLayout;
     private String mCurrentFoodItem="";
+    private Spinner mQuantityUnitSpinner;
+    private LinearLayout mPropertiesLayout;
+
     private final String mFirstTimeFood="You are adding this food item for the first time. " +
             "You can add ingredients to the food item";
 
@@ -56,15 +61,28 @@ public class AddFoodInAddMealActivity extends Activity {
         // Populate the mAddFoodAutoText with already existing food items.
         populateAddFoodAutoTextFoodItems();
 
-        // Get Ingredient Add layout. And Do not Show it.
-        mIngredientRelativeLayout = (RelativeLayout) findViewById(R.id.rl_ingredientsList);
-        mIngredientRelativeLayout.setVisibility(View.GONE);
+        // Get Contains View. Do not Show it.
+        mTextViewContains = (TextView) findViewById(R.id.tv_contains);
+        mTextViewContains.setVisibility(View.GONE);
 
         // Get upper textView.
         mAddFoodTextUpper = (TextView) findViewById(R.id.tv_add_food_text_upper);
         mAddFoodTextUpper.setVisibility(View.GONE);
+
         // Get listView
         mIngredientListView = (ListView) findViewById(R.id.lv_ingredientsList);
+
+        // Get Ingredient Add layout. And Do not Show it.
+        mIngredientRelativeLayout = (RelativeLayout) findViewById(R.id.rl_ingredientsList);
+        mIngredientRelativeLayout.setVisibility(View.GONE);
+
+        // Get Food Properties View. Do not Show it.
+        mTextViewFoodProperties = (TextView) findViewById(R.id.tv_food_properties);
+        mTextViewFoodProperties.setVisibility(View.GONE);
+
+        // Ger PropertiesLayout.
+        mPropertiesLayout = (LinearLayout) findViewById(R.id.ll_food_properties);
+        mPropertiesLayout.setVisibility(View.GONE);
 
         // Get button which will add ingredients.
         ImageView mAddIngredientButton = (ImageView) findViewById(R.id.ll_addIngredientButton);
@@ -77,9 +95,26 @@ public class AddFoodInAddMealActivity extends Activity {
 
         // Get ingredient AutoText.
         mAddIngredientAutoText = (AutoCompleteTextView) findViewById(R.id.ll_addIngredient);
+        populateMealTypeSpinner();
+    }
 
-        mTextViewContains = (TextView) findViewById(R.id.tv_contains);
-        mTextViewContains.setVisibility(View.GONE);
+
+    private void populateMealTypeSpinner() {
+        mQuantityUnitSpinner = (Spinner) findViewById(R.id.sp_quantity_unit_spinner);
+
+        List<String> aMealList = new ArrayList<>();
+        aMealList.add("gram");
+        aMealList.add("millilitre");
+        aMealList.add("cup");
+        aMealList.add("piece");
+        aMealList.add("ounce");
+        aMealList.add("litre");
+
+
+        ArrayAdapter<String> datmFoodListAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item, aMealList);
+        datmFoodListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mQuantityUnitSpinner.setAdapter(datmFoodListAdapter);
     }
 
     private void populateAddFoodAutoTextFoodItems() {
@@ -226,10 +261,15 @@ public class AddFoodInAddMealActivity extends Activity {
                         mAddFoodTextUpper.setText("No Ingredient Added");
                     }
                 }
+
+                mTextViewFoodProperties.setVisibility(View.VISIBLE);
+                mPropertiesLayout.setVisibility(View.VISIBLE);
             }
         } else {
             mIngredientRelativeLayout.setVisibility(View.GONE);
             mAddFoodTextUpper.setVisibility(View.GONE);
+            mTextViewFoodProperties.setVisibility(View.GONE);
+            mPropertiesLayout.setVisibility(View.GONE);
         }
     }
 
