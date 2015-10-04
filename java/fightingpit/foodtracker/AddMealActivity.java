@@ -22,10 +22,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import fightingpit.foodtracker.CustomLists.ListAdapterNameAndDeleteIcon;
-import fightingpit.foodtracker.CustomLists.ListAdapterSymptomsInAddMeal;
-import fightingpit.foodtracker.CustomLists.ListSingleElement;
-import fightingpit.foodtracker.CustomLists.ListSymptomsInAddMeal;
+import fightingpit.foodtracker.CustomLists.ListAdapterNameAndSeekBar;
 import fightingpit.foodtracker.DB.FoodItemsDbMethods;
+import fightingpit.foodtracker.CustomLists.GenericContainer;
 import fightingpit.foodtracker.DB.MealDbMethods;
 import fightingpit.foodtracker.DB.MealFoodDbMethods;
 import fightingpit.foodtracker.DB.MealSymptomsDbMethods;
@@ -43,13 +42,13 @@ public class AddMealActivity extends Activity{
     private Button mAddMealToTableButton;
     private Button mAddFoodToMealButton;
 
-    private List<ListSingleElement> mFoodList = new ArrayList<>();
+    private List<GenericContainer> mFoodList = new ArrayList<>();
     private ListView mFoodListToDisplay;
     ListAdapterNameAndDeleteIcon mFoodListAdapter;
 
-    private List<ListSymptomsInAddMeal> mSymptomsList = new ArrayList<>();
+    private List<GenericContainer> mSymptomsList = new ArrayList<>();
     private ListView mSymptomsListToDisplay;
-    ListAdapterSymptomsInAddMeal mSymptomsListAdapter;
+    ListAdapterNameAndSeekBar mSymptomsListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +89,12 @@ public class AddMealActivity extends Activity{
         List<String> mSymptomListFromDB = aSymptomsDbHandler.getAllSymptoms();
 
         for(String aListItem : mSymptomListFromDB){
-            mSymptomsList.add(new ListSymptomsInAddMeal(aListItem));
+            mSymptomsList.add(new GenericContainer(0,aListItem,"0"));
         }
         mSymptomsListToDisplay =(ListView) findViewById(R.id.listAllSymptoms);
-        mSymptomsListAdapter = new ListAdapterSymptomsInAddMeal(this,mSymptomsList);
+        mSymptomsListAdapter = new ListAdapterNameAndSeekBar(this,mSymptomsList);
         mSymptomsListToDisplay.setAdapter(mSymptomsListAdapter);
+        CommonUtils.setListViewHeightBasedOnChildren(mSymptomsListToDisplay);
     }
 
     @Override
@@ -102,15 +102,15 @@ public class AddMealActivity extends Activity{
         if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
 
             boolean aAddToFoodList = true;
-            for(ListSingleElement aAlreadyAddedFood:mFoodList){
-                if(aAlreadyAddedFood.getText().equals(data.getStringExtra("added_food"))){
+            for(GenericContainer aAlreadyAddedFood:mFoodList){
+                if(aAlreadyAddedFood.getStringParam1().equals(data.getStringExtra("added_food"))){
                     Toast.makeText(this,"Food item already added.",Toast.LENGTH_LONG).show();
                     aAddToFoodList = false;
                     break;
                 }
             }
             if(aAddToFoodList){
-                mFoodList.add(new ListSingleElement(data.getStringExtra("added_food")));
+                mFoodList.add(new GenericContainer(data.getStringExtra("added_food")));
                 mFoodListAdapter.notifyDataSetChanged();
             }
         }
@@ -125,8 +125,8 @@ public class AddMealActivity extends Activity{
 
         // Keep track of values of symptoms. Prevents values of symptoms from
         // being discarded when the view is redrawn.
-        mSymptomsList.get(Index).setValueFromSeekbar(value);
-        mSymptomsList.get(Index).setDisplayValueInTextbar(String.valueOf(value));
+        mSymptomsList.get(Index).setIntParam1(value);
+        mSymptomsList.get(Index).setStringParam1(String.valueOf(value));
     }
 
     public void removeFoodFromMeal(int index) {
@@ -240,27 +240,27 @@ public class AddMealActivity extends Activity{
             int aMealId = aMealDbHandler.getMealId(aMealTypeId, mealDate);
 
             // Adding foodItems to DB.
-            for(ListSingleElement aFoodItemName: mFoodList){
+            for(GenericContainer aFoodItemName: mFoodList){
                 // Get FoodItemId of Food
-                int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName.getText());
+                int aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName.getStringParam1());
                 if(aFoodItemId == -1){
                     // Food Item Not present in DB. Add Food Item in DB
-                    aFoodItemDbHandler.addFoodItem(aFoodItemName.getText());
+                    aFoodItemDbHandler.addFoodItem(aFoodItemName.getStringParam1());
                     // Get food item from just added food.
-                    aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName.getText());
+                    aFoodItemId = aFoodItemDbHandler.getFoodItemId(aFoodItemName.getStringParam1());
                 }
                 // Add foodItem to Meal.
                 aMealFoodDbHandler.addFoodToMeals(aMealId,aFoodItemId);
             }
 
             // Adding Symptoms to DB.
-            for(ListSymptomsInAddMeal aSymptom: mSymptomsList){
+            for(GenericContainer aSymptom: mSymptomsList){
                 // Add only if Symptom Value is greater than zero
-                if(aSymptom.getValueFromSeekbar() > 0){
+                if(aSymptom.getIntParam1() > 0){
                     aMealSymptomsDbHandler.addSymptomValueToMeal(
                             aMealId,
-                            aSymptomDbHandler.getSymptomId(aSymptom.getName()),
-                            aSymptom.getValueFromSeekbar()
+                            aSymptomDbHandler.getSymptomId(aSymptom.getStringParam1()),
+                            aSymptom.getIntParam1()
                     );
                 }
             }

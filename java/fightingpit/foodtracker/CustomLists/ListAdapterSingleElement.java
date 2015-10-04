@@ -18,10 +18,10 @@ import fightingpit.foodtracker.R;
 public class ListAdapterSingleElement extends BaseAdapter {
 
     Context context;
-    protected List<ListSingleElement> ListData;
+    protected List<GenericContainer> ListData;
     private LayoutInflater inflater;
 
-    public ListAdapterSingleElement(Context iContext, List<ListSingleElement> iListData){
+    public ListAdapterSingleElement(Context iContext, List<GenericContainer> iListData){
         this.ListData = iListData;
         this.inflater = LayoutInflater.from(iContext);
         this.context = iContext;
@@ -63,7 +63,7 @@ public class ListAdapterSingleElement extends BaseAdapter {
         else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.FoodDisplay.setText(ListData.get(position).getText());
+        holder.FoodDisplay.setText(ListData.get(position).getStringParam1());
         return convertView;
     }
 }

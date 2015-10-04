@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="12dp">
 
     <TextView
         android:id="@+id/tv_displayFood"
@@ -10,8 +10,8 @@
         android:singleLine="true"
         android:layout_height="36dp"
         android:paddingRight="72dp"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
+        android:paddingBottom="6dp"
+        android:paddingTop="6dp"
         android:paddingLeft="16dp"
         android:layout_centerVertical="true"
         android:textSize="16sp"

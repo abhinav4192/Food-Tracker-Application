@@ -36,6 +36,7 @@ public class FoodItemsDbMethods {
         }catch (SQLiteConstraintException e){
             aReturn = false;
         }
+        db.close();
         return aReturn;
     }
 

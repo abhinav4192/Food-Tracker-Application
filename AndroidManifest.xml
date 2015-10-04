@@ -4,7 +4,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/food_drawer_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -29,7 +29,7 @@
             android:name=".AddFoodInAddMealActivity"
             android:label="@string/title_activity_add_food_in_add_meal_activty"
             android:parentActivityName=".AddMealActivity">
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fightingpit.foodtracker.AddMealActivity" />
