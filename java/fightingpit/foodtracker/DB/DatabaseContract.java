@@ -200,6 +200,7 @@ public final class DatabaseContract {
         public static final String ATTRIBUTE_ID   = "ATTRIBUTE_ID";
         public static final String ATTRIBUTE_NAME = "ATTRIBUTE_NAME";
         public static final String ATTRIBUTE_TYPE = "ATTRIBUTE_TYPE";
+        public static final String ATTRIBUTE_UNIT       = "ATTRIBUTE_UNIT";
 
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
@@ -207,6 +208,7 @@ public final class DatabaseContract {
                 ATTRIBUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                 ATTRIBUTE_NAME + " TEXT NOT NULL" + COMMA_SEP +
                 ATTRIBUTE_TYPE + " TEXT NOT NULL" + COMMA_SEP +
+                ATTRIBUTE_UNIT + " TEXT NOT NULL" + COMMA_SEP +
                 UNIQUE + " (" + ATTRIBUTE_NAME + ")" +
                 " )";
 
@@ -218,14 +220,15 @@ public final class DatabaseContract {
         public static final String TABLE_NAME           = "MEAL_ATTRIBUTE";
         public static final String MEAL_FOOD_ID         = "MEAL_FOOD_ID";
         public static final String ATTRIBUTE_ID         = "ATTRIBUTE_ID";
-        public static final String MEAL_ATTRIBUTE_VALUE = "MEAL_ATTRIBUTE_VALUE";
-
+        public static final String ATTRIBUTE_VALUE      = "ATTRIBUTE_VALUE";
+        public static final String QUANTITY_UNIT       = "ATTRIBUTE_UNIT";
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
                 MEAL_FOOD_ID + " INTEGER NOT NULL " + COMMA_SEP +
                 ATTRIBUTE_ID + " INTEGER NOT NULL" + COMMA_SEP +
-                MEAL_ATTRIBUTE_VALUE + " TEXT NOT NULL" + COMMA_SEP +
+                ATTRIBUTE_VALUE + " TEXT NOT NULL" + COMMA_SEP +
+                QUANTITY_UNIT + " TEXT NOT NULL" + COMMA_SEP +
                 PRIMARY_KEY + " (" + MEAL_FOOD_ID + COMMA_SEP + ATTRIBUTE_ID + ")" + COMMA_SEP +
                 FOREIGN_KEY + " (" + MEAL_FOOD_ID + ") " +REFERENCES + MealFood.TABLE_NAME + " (" + MealFood.MEAL_FOOD_ID +") ON DELETE CASCADE " + COMMA_SEP +
                 FOREIGN_KEY + " (" + ATTRIBUTE_ID + ") " +REFERENCES + FoodAttribute.TABLE_NAME + " (" + FoodAttribute.ATTRIBUTE_ID +") ON DELETE CASCADE " +
