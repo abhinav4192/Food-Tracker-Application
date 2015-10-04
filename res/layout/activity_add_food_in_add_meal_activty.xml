@@ -122,38 +122,59 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginRight="6dp"
+                        android:layout_marginRight="12dp"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Quantity"
-                        android:textStyle="italic"
                         android:id="@+id/textView"
                         android:layout_weight="3"
-                        android:paddingBottom="4dp"
-                        android:paddingTop="4dp"
                         android:paddingLeft="8dp"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="bottom"/>
+                        android:layout_gravity="center_vertical"
+                        android:gravity="bottom"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp"/>
 
                     <EditText
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:id="@+id/editText"
-                        android:layout_weight="3"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginRight="6dp"
-                        android:layout_marginLeft="6dp"
+                        android:layout_weight="4"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="12dp"
                         android:ems="10"
                         android:inputType="numberDecimal"
-                        android:maxLength="6"/>
+                        android:maxLength="6"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp"/>
 
                     <Spinner
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:id="@+id/sp_quantity_unit_spinner"
-                        android:layout_weight="4"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginLeft="6dp"/>
+                        android:layout_weight="3"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"/>
                 </LinearLayout>
+
+                <ListView
+                    android:id="@+id/lv_aafiama_prop_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:listSelector="@android:color/transparent"
+                    android:animateLayoutChanges="true"
+                    android:divider="@null"/>
+
+                <ListView
+                    android:id="@+id/lv_aafiama_prop_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:listSelector="@android:color/transparent"
+                    android:animateLayoutChanges="true"
+                    android:divider="@null"/>
 
             </LinearLayout>
 

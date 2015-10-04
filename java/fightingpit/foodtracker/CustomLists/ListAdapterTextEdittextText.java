@@ -5,30 +5,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
 
 import fightingpit.foodtracker.R;
 
-
 /**
- * Created by AG on 11-Sep-15.
+ * Created by AG on 04-Oct-15.
  */
-public class ListAdapterSingleElement extends BaseAdapter {
+public class ListAdapterTextEdittextText extends BaseAdapter {
 
     Context context;
     protected List<GenericContainer> ListData;
     private LayoutInflater inflater;
 
-    public ListAdapterSingleElement(Context iContext, List<GenericContainer> iListData){
+    public ListAdapterTextEdittextText(Context iContext, List<GenericContainer> iListData){
         this.ListData = iListData;
         this.inflater = LayoutInflater.from(iContext);
         this.context = iContext;
     }
 
     private class ViewHolder {
-        TextView FoodDisplay;
+        TextView text1;
+        EditText editText1;
+        TextView text2;
     }
 
 
@@ -56,14 +58,17 @@ public class ListAdapterSingleElement extends BaseAdapter {
         ViewHolder holder = null;
         if(convertView == null){
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.list_single_element, null);
-            holder.FoodDisplay = (TextView) convertView.findViewById(R.id.tv_element_text);
+            convertView = inflater.inflate(R.layout.list_text_editext_text, null);
+            holder.text1 = (TextView) convertView.findViewById(R.id.tv_latet_1);
+            holder.editText1 = (EditText) convertView.findViewById(R.id.et_latet_1);
+            holder.text2 = (TextView) convertView.findViewById(R.id.tv_latet_2);
             convertView.setTag(holder);
         }
         else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.FoodDisplay.setText(ListData.get(position).getStringParam1());
+        holder.text1.setText(ListData.get(position).getStringParam1());
+        holder.text2.setText(ListData.get(position).getStringParam2());
         return convertView;
     }
 }

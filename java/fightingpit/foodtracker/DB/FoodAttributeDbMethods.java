@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import fightingpit.foodtracker.CustomLists.GenericContainer;
+
 /**
  * Created by AG on 04-Oct-15.
  */
@@ -60,17 +62,20 @@ public class FoodAttributeDbMethods {
         return aReturnValue;
     }
 
-    public List<GenericDbContainer> getAllFoodAttributeTypes(){
+    public List<GenericContainer> getAllFoodAttributeTypes(){
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {DatabaseContract.FoodAttribute.ATTRIBUTE_NAME,
                 DatabaseContract.FoodAttribute.ATTRIBUTE_TYPE,
                 DatabaseContract.FoodAttribute.ATTRIBUTE_UNIT};
+//        String sortOrder =
+//                DatabaseContract.FoodAttribute.ATTRIBUTE_NAME + " DESC";
+
         Cursor c = db.query(DatabaseContract.FoodAttribute.TABLE_NAME, projection, null, null, null, null, null);
 
-        List<GenericDbContainer> aReturnList = new ArrayList<>();
+        List<GenericContainer> aReturnList = new ArrayList<>();
         c.moveToFirst();
         while(!c.isAfterLast()){
-            aReturnList.add(new GenericDbContainer(c.getString(c.getColumnIndexOrThrow(DatabaseContract.FoodAttribute.ATTRIBUTE_NAME)),
+            aReturnList.add(new GenericContainer(c.getString(c.getColumnIndexOrThrow(DatabaseContract.FoodAttribute.ATTRIBUTE_NAME)),
                     c.getString(c.getColumnIndexOrThrow(DatabaseContract.FoodAttribute.ATTRIBUTE_TYPE)),
                             c.getString(c.getColumnIndexOrThrow(DatabaseContract.FoodAttribute.ATTRIBUTE_UNIT))));
             c.moveToNext();

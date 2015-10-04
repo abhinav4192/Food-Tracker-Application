@@ -208,7 +208,7 @@ public final class DatabaseContract {
                 ATTRIBUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                 ATTRIBUTE_NAME + " TEXT NOT NULL" + COMMA_SEP +
                 ATTRIBUTE_TYPE + " TEXT NOT NULL" + COMMA_SEP +
-                ATTRIBUTE_UNIT + " TEXT NOT NULL" + COMMA_SEP +
+                ATTRIBUTE_UNIT + " TEXT" + COMMA_SEP +
                 UNIQUE + " (" + ATTRIBUTE_NAME + ")" +
                 " )";
 
@@ -228,7 +228,7 @@ public final class DatabaseContract {
                 MEAL_FOOD_ID + " INTEGER NOT NULL " + COMMA_SEP +
                 ATTRIBUTE_ID + " INTEGER NOT NULL" + COMMA_SEP +
                 ATTRIBUTE_VALUE + " TEXT NOT NULL" + COMMA_SEP +
-                QUANTITY_UNIT + " TEXT NOT NULL" + COMMA_SEP +
+                QUANTITY_UNIT + " TEXT" + COMMA_SEP +
                 PRIMARY_KEY + " (" + MEAL_FOOD_ID + COMMA_SEP + ATTRIBUTE_ID + ")" + COMMA_SEP +
                 FOREIGN_KEY + " (" + MEAL_FOOD_ID + ") " +REFERENCES + MealFood.TABLE_NAME + " (" + MealFood.MEAL_FOOD_ID +") ON DELETE CASCADE " + COMMA_SEP +
                 FOREIGN_KEY + " (" + ATTRIBUTE_ID + ") " +REFERENCES + FoodAttribute.TABLE_NAME + " (" + FoodAttribute.ATTRIBUTE_ID +") ON DELETE CASCADE " +

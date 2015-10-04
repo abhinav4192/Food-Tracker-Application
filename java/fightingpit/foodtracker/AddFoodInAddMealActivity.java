@@ -24,10 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fightingpit.foodtracker.CustomLists.ListAdapterNameAndDeleteIcon;
+import fightingpit.foodtracker.CustomLists.ListAdapterNameAndSeekBar;
 import fightingpit.foodtracker.CustomLists.ListAdapterSingleElement;
-import fightingpit.foodtracker.CustomLists.ListSingleElement;
+import fightingpit.foodtracker.CustomLists.ListAdapterTextEdittextText;
+import fightingpit.foodtracker.DB.FoodAttributeDbMethods;
 import fightingpit.foodtracker.DB.FoodIngredientsDbMethods;
 import fightingpit.foodtracker.DB.FoodItemsDbMethods;
+import fightingpit.foodtracker.CustomLists.GenericContainer;
 import fightingpit.foodtracker.DB.IngredientsDbMethods;
 
 public class AddFoodInAddMealActivity extends Activity {
@@ -37,7 +40,7 @@ public class AddFoodInAddMealActivity extends Activity {
     private TextView mAddFoodTextUpper;
     private TextView mTextViewContains;
     private TextView mTextViewFoodProperties;
-    private List<ListSingleElement> mIngredientCompleteList = new ArrayList<>();
+    private List<GenericContainer> mIngredientCompleteList = new ArrayList<>();
     private ListView mIngredientListView;
     private MenuItem mActionAddFoodButton;
     private ListAdapterSingleElement mAdapterSingleElement;
@@ -46,6 +49,10 @@ public class AddFoodInAddMealActivity extends Activity {
     private String mCurrentFoodItem="";
     private Spinner mQuantityUnitSpinner;
     private LinearLayout mPropertiesLayout;
+    private ListView mPropertyValueListView;
+    private ListView mPropertySliderListView;
+    private ListAdapterTextEdittextText mPropertyValueAdapter;
+    private ListAdapterNameAndSeekBar mPropertySliderAdaper;
 
     private final String mFirstTimeFood="You are adding this food item for the first time. " +
             "You can add ingredients to the food item";
@@ -96,6 +103,12 @@ public class AddFoodInAddMealActivity extends Activity {
         // Get ingredient AutoText.
         mAddIngredientAutoText = (AutoCompleteTextView) findViewById(R.id.ll_addIngredient);
         populateMealTypeSpinner();
+
+        mPropertyValueListView = (ListView) findViewById(R.id.lv_aafiama_prop_value);
+        mPropertyValueListView.setVisibility(View.GONE);
+
+        mPropertySliderListView = (ListView) findViewById(R.id.lv_aafiama_prop_slider);
+        mPropertySliderListView.setVisibility(View.GONE);
     }
 
 
@@ -250,7 +263,7 @@ public class AddFoodInAddMealActivity extends Activity {
 
                         IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
                         for (String ingredientId : aIngredientIdList) {
-                            mIngredientCompleteList.add(new ListSingleElement(aIngredientsDbHandler.getIngredientName(ingredientId)));
+                            mIngredientCompleteList.add(new GenericContainer(aIngredientsDbHandler.getIngredientName(ingredientId)));
                         }
 
                         mAdapterSingleElement = new ListAdapterSingleElement(this, mIngredientCompleteList);
@@ -262,14 +275,45 @@ public class AddFoodInAddMealActivity extends Activity {
                     }
                 }
 
-                mTextViewFoodProperties.setVisibility(View.VISIBLE);
-                mPropertiesLayout.setVisibility(View.VISIBLE);
+                handleFoodProperty();
+
             }
         } else {
             mIngredientRelativeLayout.setVisibility(View.GONE);
             mAddFoodTextUpper.setVisibility(View.GONE);
             mTextViewFoodProperties.setVisibility(View.GONE);
             mPropertiesLayout.setVisibility(View.GONE);
+            mPropertyValueListView.setVisibility(View.GONE);
+            mPropertySliderListView.setVisibility(View.GONE);
+        }
+    }
+
+    public void handleFoodProperty(){
+        mTextViewFoodProperties.setVisibility(View.VISIBLE);
+        mPropertiesLayout.setVisibility(View.VISIBLE);
+
+        List<GenericContainer> aPropertyValueList = new ArrayList<GenericContainer>();
+        List<GenericContainer> aPropertySliderList = new ArrayList<GenericContainer>();
+        FoodAttributeDbMethods aFoodAttributeDbHandler = new FoodAttributeDbMethods(this);
+        for(GenericContainer aListItem:aFoodAttributeDbHandler.getAllFoodAttributeTypes()){
+            if(aListItem.getStringParam2().equals("v")){
+                aPropertyValueList.add(new GenericContainer(aListItem.getStringParam1(),aListItem.getStringParam3()));
+            }else{
+                aPropertySliderList.add(new GenericContainer(0,aListItem.getStringParam1(),"0"));
+            }
+        }
+
+        if(aPropertyValueList.size()>0){
+            mPropertyValueListView.setVisibility(View.VISIBLE);
+            mPropertyValueAdapter = new ListAdapterTextEdittextText(this, aPropertyValueList);
+            mPropertyValueListView.setAdapter(mPropertyValueAdapter);
+            CommonUtils.setListViewHeightBasedOnChildren(mPropertyValueListView);
+        }
+        if(aPropertySliderList.size()>0){
+            mPropertySliderListView.setVisibility(View.VISIBLE);
+            mPropertySliderAdaper = new ListAdapterNameAndSeekBar(this, aPropertySliderList);
+            mPropertySliderListView.setAdapter(mPropertySliderAdaper);
+            CommonUtils.setListViewHeightBasedOnChildren(mPropertySliderListView);
         }
     }
 
@@ -343,8 +387,8 @@ public class AddFoodInAddMealActivity extends Activity {
 
         if (CommonUtils.islengthValid(aAddedIngredientName)) {
             aAddedIngredientName = CommonUtils.makeProperFormat(aAddedIngredientName);
-            for (ListSingleElement aAlreadyAddedIngredient : mIngredientCompleteList) {
-                if (aAlreadyAddedIngredient.getText().equals(aAddedIngredientName)) {
+            for (GenericContainer aAlreadyAddedIngredient : mIngredientCompleteList) {
+                if (aAlreadyAddedIngredient.getStringParam1().equals(aAddedIngredientName)) {
                     aAddIngredient = false;
                     Toast.makeText(this, "Ingredient already added", Toast.LENGTH_SHORT).show();
                     mAddIngredientAutoText.setText("");
@@ -356,7 +400,7 @@ public class AddFoodInAddMealActivity extends Activity {
             aAddIngredient = false;
         }
         if (aAddIngredient) {
-            mIngredientCompleteList.add(new ListSingleElement(aAddedIngredientName));
+            mIngredientCompleteList.add(new GenericContainer(aAddedIngredientName));
             mAdapterNameAndDeleteIcon.notifyDataSetChanged();
             CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
 
@@ -429,8 +473,8 @@ public class AddFoodInAddMealActivity extends Activity {
 
             IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
             FoodIngredientsDbMethods aFoodIngredientsDbHandler = new FoodIngredientsDbMethods(this);
-            for (ListSingleElement aAddedIngredient : mIngredientCompleteList) {
-                String aIngredientName = aAddedIngredient.getText();
+            for (GenericContainer aAddedIngredient : mIngredientCompleteList) {
+                String aIngredientName = aAddedIngredient.getStringParam1();
 
                 int aIngredientId = aIngredientsDbHandler.getIngredientId(aIngredientName);
                 if(aIngredientId == -1 ){

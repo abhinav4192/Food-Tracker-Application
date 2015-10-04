@@ -1,7 +1,6 @@
 package fightingpit.foodtracker.CustomLists;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -21,10 +20,10 @@ import fightingpit.foodtracker.R;
 public class ListAdapterNameAndDeleteIcon extends BaseAdapter {
 
     Context context;
-    protected List<ListSingleElement> ListData;
+    protected List<GenericContainer> ListData;
     private LayoutInflater inflater;
 
-    public ListAdapterNameAndDeleteIcon(Context iContext, List<ListSingleElement> iListData){
+    public ListAdapterNameAndDeleteIcon(Context iContext, List<GenericContainer> iListData){
         this.ListData = iListData;
         this.inflater = LayoutInflater.from(iContext);
         this.context = iContext;
@@ -68,7 +67,7 @@ public class ListAdapterNameAndDeleteIcon extends BaseAdapter {
         else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.FoodDisplay.setText(ListData.get(position).getText());
+        holder.FoodDisplay.setText(ListData.get(position).getStringParam1());
 
         ImageView aImg = (ImageView) convertView.findViewById(R.id.iv_list_delete_button);
         aImg.setOnClickListener(new View.OnClickListener() {

@@ -16,6 +16,6 @@
         android:layout_centerVertical="true"
         android:textSize="16sp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text=" fsd fsdaf sdaf sda fsda fsda fsda fsda "/>
+        android:text="Random text. Random test."/>
 
 </LinearLayout>
