@@ -34,6 +34,7 @@ public class AddFoodInAddMealActivity extends Activity {
     private AutoCompleteTextView mAddFoodAutoText;
     private AutoCompleteTextView mAddIngredientAutoText;
     private TextView mAddFoodTextUpper;
+    private TextView mTextViewContains;
     private List<ListSingleElement> mIngredientCompleteList = new ArrayList<>();
     private ListView mIngredientListView;
     private MenuItem mActionAddFoodButton;
@@ -41,9 +42,8 @@ public class AddFoodInAddMealActivity extends Activity {
     private ListAdapterNameAndDeleteIcon mAdapterNameAndDeleteIcon;
     private RelativeLayout mIngredientRelativeLayout;
     private String mCurrentFoodItem="";
-    private final String mFirstTimeFood="<b>Contains:</b><br><h7>" +
-            "You are adding this food item for the first time. " +
-            "You can add ingredients to the food item.</h7>";
+    private final String mFirstTimeFood="You are adding this food item for the first time. " +
+            "You can add ingredients to the food item";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +77,9 @@ public class AddFoodInAddMealActivity extends Activity {
 
         // Get ingredient AutoText.
         mAddIngredientAutoText = (AutoCompleteTextView) findViewById(R.id.ll_addIngredient);
+
+        mTextViewContains = (TextView) findViewById(R.id.tv_contains);
+        mTextViewContains.setVisibility(View.GONE);
     }
 
     private void populateAddFoodAutoTextFoodItems() {
@@ -153,6 +156,7 @@ public class AddFoodInAddMealActivity extends Activity {
         boolean toClearIngredientsList = false;
         if(!CommonUtils.islengthValid(mAddFoodAutoText.getText().toString())){
             toClearIngredientsList = true;
+            mTextViewContains.setVisibility(View.GONE);
         }else if(CommonUtils.islengthValid(mCurrentFoodItem) &&
                 !mCurrentFoodItem.equals(CommonUtils.makeProperFormat(mAddFoodAutoText.getText().toString()))){
             toClearIngredientsList = true;
@@ -174,6 +178,9 @@ public class AddFoodInAddMealActivity extends Activity {
         // Get Food name entered in AutoText
         String aFoodItemName = mAddFoodAutoText.getText().toString();
         if (CommonUtils.islengthValid(aFoodItemName)) {
+
+            // Make contains tag visible
+            mTextViewContains.setVisibility(View.VISIBLE);
             aFoodItemName = CommonUtils.makeProperFormat(aFoodItemName);
             mCurrentFoodItem = aFoodItemName;
             FoodItemsDbMethods aFoodItemDbHandler = new FoodItemsDbMethods(this);
@@ -184,7 +191,7 @@ public class AddFoodInAddMealActivity extends Activity {
                     mIngredientRelativeLayout.setVisibility(View.VISIBLE);
 
                     // Set upper text display.
-                    mAddFoodTextUpper.setText(Html.fromHtml(mFirstTimeFood));
+                    mAddFoodTextUpper.setText(mFirstTimeFood);
                     mAddFoodTextUpper.setVisibility(View.VISIBLE);
 
                     // Set Hint in Ingredient AutoText
@@ -204,7 +211,7 @@ public class AddFoodInAddMealActivity extends Activity {
                     FoodIngredientsDbMethods aFoodIngredientsDbHandler = new FoodIngredientsDbMethods(this);
                     List<String> aIngredientIdList = aFoodIngredientsDbHandler.getAllIngredientsInFood(aFoodItemId);
                     if (aIngredientIdList.size() > 0) {
-                        mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b>"));
+                        mAddFoodTextUpper.setVisibility(View.GONE);
 
                         IngredientsDbMethods aIngredientsDbHandler = new IngredientsDbMethods(this);
                         for (String ingredientId : aIngredientIdList) {
@@ -215,9 +222,9 @@ public class AddFoodInAddMealActivity extends Activity {
                         mIngredientListView.setAdapter(mAdapterSingleElement);
                         CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
                     } else {
-                        mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b><br><h7>No Ingredient</h7>"));
+                        mAddFoodTextUpper.setVisibility(View.VISIBLE);
+                        mAddFoodTextUpper.setText("No Ingredient Added");
                     }
-                    mAddFoodTextUpper.setVisibility(View.VISIBLE);
                 }
             }
         } else {
@@ -314,7 +321,7 @@ public class AddFoodInAddMealActivity extends Activity {
             CommonUtils.setListViewHeightBasedOnChildren(mIngredientListView);
 
             if(mIngredientCompleteList.size()==1){
-                mAddFoodTextUpper.setText(Html.fromHtml("<b>Contains:</b>"));
+                mAddFoodTextUpper.setVisibility(View.GONE);
                 mAddIngredientAutoText.setHint("Add Another Ingredient");
             }
 
@@ -327,7 +334,8 @@ public class AddFoodInAddMealActivity extends Activity {
     public void removeIngredientFromFood(int iIndex){
         mIngredientCompleteList.remove(iIndex);
         if(mIngredientCompleteList.size()==0){
-            mAddFoodTextUpper.setText(Html.fromHtml(mFirstTimeFood));
+            mAddFoodTextUpper.setText(mFirstTimeFood);
+            mAddFoodTextUpper.setVisibility(View.VISIBLE);
             mAddIngredientAutoText.setHint("Add Ingredient (Optional)");
         }
         mAdapterNameAndDeleteIcon.notifyDataSetChanged();
@@ -347,12 +355,20 @@ public class AddFoodInAddMealActivity extends Activity {
         int id = item.getItemId();
 
         if (id == R.id.action_addFood) {
-            String aOutput = CommonUtils.makeProperFormat(mAddFoodAutoText.getText().toString());
-            Intent output = new Intent();
-            output.putExtra("added_food", aOutput);
-            setResult(RESULT_OK, output);
-            addFoodAndIngredientsToDb();
-            finish();
+            String aOutput = mAddFoodAutoText.getText().toString();
+            if(CommonUtils.islengthValid(aOutput))
+            {
+                aOutput=CommonUtils.makeProperFormat(aOutput);
+                Intent output = new Intent();
+                output.putExtra("added_food", aOutput);
+                setResult(RESULT_OK, output);
+                addFoodAndIngredientsToDb();
+                finish();
+            }
+            else{
+                Toast.makeText(this, "Enter a valid Food Item", Toast.LENGTH_SHORT).show();
+            }
+
             return true;
         }
 
